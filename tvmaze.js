@@ -95,4 +95,13 @@ async function getEpisodes(id) {
   //       you can get this by making GET request to
   //       http://api.tvmaze.com/shows/SHOW-ID-HERE/episodes
   // TODO: return array-of-episode-info, as described in docstring above
+
+  const res = await axios.get(`http://api.tvmaze.com/shows/${id}/episodes`);
+
+  const episodes = res.data.map((episode) => {
+    let { id, name, season, number } = episode;
+    return { id, name, season, number };
+  });
+
+  return episodes;
 }
