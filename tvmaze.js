@@ -59,6 +59,7 @@ function populateShows(shows) {
              <h5 class="card-title">${show.name}</h5>
              <p class="card-text">${show.summary}</p>
            </div>
+           <button type="button" class="btn btn-primary">Episodes</button>
          </div>
        </div>
       `
@@ -104,4 +105,17 @@ async function getEpisodes(id) {
   });
 
   return episodes;
+}
+
+function populateEpisodes(episodes) {
+  const $episodesList = $("#episodes-list");
+  $episodesList.empty();
+  for (let episode of episodes) {
+    let $item = $(
+      `<li>${episode.name} (season ${episode.season}, number ${episode.number}</li>`
+    );
+    $episodesList.append($item);
+  }
+  const $episodesArea = $("#episodes-area");
+  $episodesArea.show();
 }
