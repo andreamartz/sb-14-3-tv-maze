@@ -58,8 +58,9 @@ function populateShows(shows) {
            <div class="card-body">
              <h5 class="card-title">${show.name}</h5>
              <p class="card-text">${show.summary}</p>
+             <button type="button" class="btn btn-lg btn-primary d-block mx-auto episodes-btn">Episodes</button>
            </div>
-           <button type="button" class="btn btn-primary">Episodes</button>
+           
          </div>
        </div>
       `
@@ -119,3 +120,13 @@ function populateEpisodes(episodes) {
   const $episodesArea = $("#episodes-area");
   $episodesArea.show();
 }
+
+$("#shows-list").on("click", ".episodes-btn", async function (event) {
+  console.log("target: ", event.target);
+  console.log($(this));
+  const showId = $(this).closest("*[data-show-id]").data("show-id");
+  console.log("show id: ", showId);
+  const episodes = await getEpisodes(showId);
+  console.log("episodes: ", episodes);
+  populateEpisodes(episodes);
+});
