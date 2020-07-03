@@ -22,7 +22,6 @@ async function searchShows(q) {
   try {
     const url = `http://api.tvmaze.com/search/shows`;
     const res = await axios.get(url, { params: { q } });
-    console.log("print result data: ", res.data);
     const data = [];
     const defaultImage = "https://tinyurl.com/tv-missing";
     for (let tvshow of res.data) {
@@ -35,7 +34,6 @@ async function searchShows(q) {
       };
       data.push(showInfo);
     }
-    console.log("data: ", data);
     return data;
   } catch (e) {
     alert("SHOW NOT FOUND!");
@@ -122,11 +120,7 @@ function populateEpisodes(episodes) {
 }
 
 $("#shows-list").on("click", ".episodes-btn", async function (event) {
-  console.log("target: ", event.target);
-  console.log($(this));
   const showId = $(this).closest("*[data-show-id]").data("show-id");
-  console.log("show id: ", showId);
   const episodes = await getEpisodes(showId);
-  console.log("episodes: ", episodes);
   populateEpisodes(episodes);
 });
