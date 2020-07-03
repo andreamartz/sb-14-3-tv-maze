@@ -1,28 +1,22 @@
-/** Given a query string, return array of matching shows:
- *     { id, name, summary, episodesUrl }
- */
-
 /** Search Shows
  *    - given a search term, search for tv shows that
- *      match that query.  The function is async show it
+ *      match that query.  The function is async, so it
  *       will be returning a promise.
  *
- *   - Returns an array of objects. Each object should include
- *     following show information:
- *    {
-        id: <show id>,
-        name: <show name>,
-        summary: <show summary>,
-        image: <an image from the show data, or a default imege if no image exists, (image isn't needed until later)>
-      }
  */
+// Given a search term, make ajax request to the show search api endpoint
+// return an array of tv show objects. Each object includes the following show information:
+//      { id: <show id>,
+//        name: <show name>,
+//        summary: <show summary>,
+//        image: <an image from the show data, or a default image if no image exists, (image isn't needed until later)>
+//       }
 async function searchShows(q) {
-  // TODO: Make an ajax request to the searchShows api.  Remove
-  // hard coded data.
   try {
     const url = `http://api.tvmaze.com/search/shows`;
     const res = await axios.get(url, { params: { q } });
-    const data = [];
+    const shows = [];
+    // return this default image if an image is not returned for the show
     const defaultImage = "https://tinyurl.com/tv-missing";
     for (let tvshow of res.data) {
       const show = tvshow.show;
@@ -32,18 +26,15 @@ async function searchShows(q) {
         summary: show.summary,
         image: show.image ? show.image.medium : defaultImage,
       };
-      data.push(showInfo);
+      shows.push(showInfo);
     }
-    return data;
+    return shows;
   } catch (e) {
     alert("SHOW NOT FOUND!");
   }
 }
 
-/** Populate shows list:
- *     - given list of shows, add shows to DOM
- */
-
+// given an array of show objects, add shows to the DOM
 function populateShows(shows) {
   const $showsList = $("#shows-list");
   $showsList.empty();
@@ -68,11 +59,8 @@ function populateShows(shows) {
   }
 }
 
-/** Handle search form submission:
- *    - hide episodes area
- *    - get list of matching shows and show in shows list
- */
-
+// Handle search form submission
+// when search term is submitted, hide the episodes area and add the shows to the DOM
 $("#search-form").on("submit", async function handleSearch(evt) {
   evt.preventDefault();
 
@@ -86,16 +74,10 @@ $("#search-form").on("submit", async function handleSearch(evt) {
   populateShows(shows);
 });
 
-/** Given a show ID, return list of episodes:
- *      { id, name, season, number }
- */
-
+// given a show ID, make ajax get request to shows/id/episodes endpoint and return array of episode objects
+// each episode object will have keys:
+// { id, name, season, number }
 async function getEpisodes(id) {
-  // TODO: get episodes from tvmaze
-  //       you can get this by making GET request to
-  //       http://api.tvmaze.com/shows/SHOW-ID-HERE/episodes
-  // TODO: return array-of-episode-info, as described in docstring above
-
   const res = await axios.get(`http://api.tvmaze.com/shows/${id}/episodes`);
 
   const episodes = res.data.map((episode) => {
@@ -106,12 +88,13 @@ async function getEpisodes(id) {
   return episodes;
 }
 
+// given an array of episode objects, add episode data to the list in the DOM
 function populateEpisodes(episodes) {
   const $episodesList = $("#episodes-list");
   $episodesList.empty();
   for (let episode of episodes) {
     let $item = $(
-      `<li>${episode.name} (season ${episode.season}, number ${episode.number}</li>`
+      `<li>${episode.name} (season ${episode.season}, number ${episode.number})</li>`
     );
     $episodesList.append($item);
   }
@@ -119,6 +102,7 @@ function populateEpisodes(episodes) {
   $episodesArea.show();
 }
 
+// Handle clicks on Episode button below show info to add episode information to the DOM
 $("#shows-list").on("click", ".episodes-btn", async function (event) {
   const showId = $(this).closest("*[data-show-id]").data("show-id");
   const episodes = await getEpisodes(showId);
